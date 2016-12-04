@@ -33,8 +33,6 @@ public abstract class EnchantmentModifier {
 	
 	public abstract String getName();
 	
-	public void onPlayerJump(EntityPlayer player, int jumped){}
-	
 	public void onEntityBeforeDeath(EntityPlayer player, EntityLivingBase entity){}
 	
 	public void onEntityDeath(EntityPlayer player, EntityLivingBase entity, boolean recentlyHit){}
@@ -42,10 +40,16 @@ public abstract class EnchantmentModifier {
 	public void onAttackEntity(EntityPlayer player, EntityLivingBase entity){}
 	
 	/**Currently unsupported**/
+	public void onPlayerJump(EntityPlayer player, int jumped){}
+	
+	/**Currently unsupported**/
 	public void onArmorDamage(EntityPlayer player, DamageSource source, float amount){}
 	
 	/**Currently unsupported**/
 	public void onThrowStar(EntityPlayer player, EntityThrow throwingStar){}
+	
+	/**Currently unsupported**/
+	public void onArrorHits(EntityPlayer player, Entity entity, EntityArrow arrow){}
 	
 	public int getSpanTime(EntityPlayer player, int time)
 	{
@@ -57,10 +61,7 @@ public abstract class EnchantmentModifier {
 		return range;
 	}
 	
-	public void onShotArrow(EntityPlayer player, EntityRandomArrow arrow) {}
-	
-	/**Currently unsupported**/
-	public void onArrorHits(EntityPlayer player, Entity entity, EntityArrow arrow){}
+	public void onShotArrow(EntityPlayer player, EntityRandomArrow arrow) {}	
 	
 	/**If player clicks in air x, y  and z = -1 and block = null**/
 	public boolean onRightClick(EntityPlayer player, int x, int y, int z, Block block, int side, float hitX, float hitY, float hitZ)
@@ -153,7 +154,7 @@ public abstract class EnchantmentModifier {
 		ArrayList<ItemStack> batteries = new ArrayList<ItemStack>();
 		int power = 0;
 		for (int i = 0; i < player.inventory.mainInventory.length; i++) {
-			int powerStack = RandomItemBattery.getPower(player.inventory.mainInventory[i]);
+			float powerStack = RandomItemBattery.getPower(player.inventory.mainInventory[i]);
 			if(powerStack > 0)
 			{
 				power += powerStack;
@@ -167,7 +168,7 @@ public abstract class EnchantmentModifier {
 			for (int i = 0; i < batteries.size(); i++) {
 				if(usedpower < power)
 				{
-					int takenPower = RandomItemBattery.getDamage(batteries.get(i));
+					float takenPower = RandomItemBattery.getDamage(batteries.get(i));
 					if(takenPower > amount-usedpower)
 						takenPower = amount-usedpower;
 					RandomItemBattery.setDamage(batteries.get(i), RandomItemBattery.getDamage(batteries.get(i))-takenPower);

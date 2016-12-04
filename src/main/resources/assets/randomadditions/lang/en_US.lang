@@ -32,6 +32,10 @@ tile.BlockRAMachine.Furnace.name=Mechanic Furnace
 tile.BlockRAMachine.Anvil.name=Mechanic Anvil
 tile.BlockRAMachine.Crusher.name=Mechanic Crusher
 tile.BlockRAMachine.CoolingPool.name=Cooling Pool
+tile.BlockRAMachine.Sawing.name=Mechanic Sawing Machine
+
+tile.BlockRAcmachine.Lightning.name=Lightning Machine
+
 
 tile.BlockRAUpgrade.UpgradeTable.name=Upgrade Table
 tile.BlockRAUpgrade.CombineTable.name=Combine Table
@@ -178,6 +182,14 @@ tile.BlockRADecoration.Shelf4.name=Acacia Shelf
 tile.BlockRADecoration.Shelf5.name=Dark Oak Shelf
 tile.BlockRADecoration.MiddleGlass.name=Glass Roof
 
+tile.BlockRALittle.LittleCable_0.name=Little Wire Tier I
+tile.BlockRALittle.LittleCable_1.name=Little Wire Tier II
+tile.BlockRALittle.LittleCable_2.name=Little Wire Tier III
+tile.BlockRALittle.LittleCable_3.name=Little Wire Tier IV
+
+tile.BlockRARFConverters.RAtoRF.name=RA to RF Converter
+tile.BlockRARFConverters.RFtoRA.name=RF to RA Converter
+
 item.ItemRAIngot.bronze.name=Bronze Ingot
 item.ItemRAIngot.copper.name=Copper Ingot
 item.ItemRAIngot.tin.name=Tin Ingot
@@ -212,6 +224,10 @@ item.ItemRA.rubyDust.name=Ruby Dust
 item.ItemRA.silverDust.name=Silver Dust
 item.ItemRA.tinDust.name=Tin Dust
 item.ItemRA.tourmalineDust.name=Tourmaline Dust
+item.ItemRA.zincDust.name=Zinc Dust
+item.ItemRA.ferrousDust.name=Ferrous Dust
+item.ItemRA.yelloriteDust.name=Yellorite Dust
+item.ItemRA.osmiumDust.name=Osmium Dust
 
 item.ItemRA.axePlate.name=Iron Axe Plate
 item.ItemRA.shovelPlate.name=Iron Shovel Plate
@@ -250,6 +266,7 @@ item.ItemRA.battery2.name=Battery Level 2
 item.ItemRA.battery3.name=Battery Level 3
 
 item.ItemRA.itemwire.name=Wire
+item.ItemRA.coil.name=Coil
 
 item.RAArmorHelmetBronze.name=Bronze Helmet
 item.RAArmorHelmetCopper.name=Copper Helmet
@@ -286,3 +303,8 @@ item.RAArmorBootsTourmaline.name=Tourmaline Boots
 item.RAArmorBootsEmerald.name=Emerald Boots
 item.RAArmorBootsObsidian.name=Obsidian Boots
 item.RAArmorBootsLapis.name=Lapis Boots
+
+custom.redstone.ignore=Ignore Signal
+custom.redstone.signal=Signal
+custom.redstone.nosignal=No Signal
+custom.redstone.impluse=Impluse Signal

@@ -11,15 +11,15 @@ public class GuiHeatOMeter extends GuiPowerOMeter{
 	public TileEntityHeatGenerator heat;
 	public int index;
 	
-	public GuiHeatOMeter(SubBlock block, TileEntityHeatGenerator machine, int x, int y,
+	public GuiHeatOMeter(String name, SubBlock block, TileEntityHeatGenerator machine, int x, int y,
 			int width, int height, int index) {
-		super(block, machine, x, y, width, height);
+		super(name, block, machine, x, y, width, height);
 		this.heat = machine;
 		this.index = index;
 	}
 	
 	@Override
-	public int getPower()
+	public float getPower()
 	{
 		return heat.fuel[index];
 	}

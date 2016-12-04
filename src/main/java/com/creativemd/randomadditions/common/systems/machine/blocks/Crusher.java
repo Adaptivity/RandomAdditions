@@ -145,6 +145,8 @@ public class Crusher extends SubBlockMachine{
 		registerRecipe(new MachineRecipe("ingotTungsten", RandomItem.tungstenDust.getItemStack()));
 		registerRecipe(new MachineRecipe("ingotFerrous", RandomItem.ferrousDust.getItemStack()));
 		registerRecipe(new MachineRecipe("ingotZinc", RandomItem.zincDust.getItemStack()));
+		registerRecipe(new MachineRecipe("ingotOsmium", RandomItem.osmiumDust.getItemStack()));
+		registerRecipe(new MachineRecipe("ingotYellorite", RandomItem.yelloriteDust.getItemStack()));
 		
 		//Crush ores
 		registerRecipe(new MachineRecipe("oreAluminium", new ItemStack(RandomAdditions.items, 2, RandomItem.aluminiumDust.id)));
@@ -165,6 +167,8 @@ public class Crusher extends SubBlockMachine{
 		registerRecipe(new MachineRecipe("oreTungsten", new ItemStack(RandomAdditions.items, 2, RandomItem.tungstenDust.id)));
 		registerRecipe(new MachineRecipe("oreFerrous", new ItemStack(RandomAdditions.items, 2, RandomItem.ferrousDust.id)));
 		registerRecipe(new MachineRecipe("oreZinc", new ItemStack(RandomAdditions.items, 2, RandomItem.zincDust.id)));
+		registerRecipe(new MachineRecipe("oreOsmium", new ItemStack(RandomAdditions.items, 2, RandomItem.osmiumDust.id)));
+		registerRecipe(new MachineRecipe("oreYellorite", new ItemStack(RandomAdditions.items, 2, RandomItem.yelloriteDust.id)));
 	}
 	
 	@Override
@@ -193,7 +197,7 @@ public class Crusher extends SubBlockMachine{
 		if(entity instanceof TileEntityMachine)
 		{
 			float rotation = System.nanoTime()/30000000;
-			int speed = ((TileEntityMachine) entity).getProgressSpeed();
+			float speed = ((TileEntityMachine) entity).getCraftingSpeed();
 			if(entity instanceof TileEntityMachine)
 				rotation *= (double)speed * 0.6;
 			if(((TileEntityMachine) entity).progress == 0)
@@ -218,7 +222,8 @@ public class Crusher extends SubBlockMachine{
 		TileEntityMachine machine = (TileEntityMachine) par1World.getTileEntity(par2, par3, par4);
 		if(machine.progress > 0)
 		{
-			for (int i = 0; i < machine.getProgressSpeed(); i++) {
+			float speed = machine.getCraftingSpeed();
+			for (int i = 0; i < speed; i++) {
 				par1World.spawnParticle("blockcrack_" + Block.getIdFromBlock(Blocks.stone_slab) + "_0", par2+0.5, par3+0.35, par4+0.5, 0, 0, 0);	
 			}
 		}
@@ -228,7 +233,7 @@ public class Crusher extends SubBlockMachine{
 	public void renderProgressField(double percent) {
 		for (int i = 0; i < 11; i++) {
         	RenderHelper2D.renderIcon(Blocks.piston_head.getIcon(0, 2), i*8+4, 40+getOffset(i), percent, true, 0, 8, 8);
-        	RenderHelper2D.renderIcon(Blocks.piston_head.getIcon(0, 2), i*8-4, -5-getOffset(i), percent, true, 180, 8, 8);
+        	RenderHelper2D.renderIcon(Blocks.piston_head.getIcon(0, 2), i*8+4, 3-getOffset(i), percent, true, 180, 8, 8);
 		}
 	}
 	
@@ -236,5 +241,14 @@ public class Crusher extends SubBlockMachine{
 	{
 		return (int)((Math.sin((double)System.nanoTime()/(250000000D*Math.sin((index+1)*0.369D)))-1)*2.5D);
 	}
+
+	@Override
+	public int getPlayTime() {
+		return 40;
+	}
 	
+	@Override
+	public float getPlayVolume(){
+		return 0.25F;
+	}
 }

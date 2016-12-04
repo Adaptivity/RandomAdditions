@@ -11,7 +11,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import com.creativemd.creativecore.common.utils.InventoryUtils;
 import com.creativemd.randomadditions.common.energy.core.EnergyComponent;
+import com.creativemd.randomadditions.common.redstone.RedstoneControlHelper;
 import com.creativemd.randomadditions.common.systems.producer.blocks.HeatGenerator;
+import com.creativemd.randomadditions.core.RandomAdditions;
 
 public class TileEntityHeatGenerator extends EnergyComponent implements ISidedInventory{
 	
@@ -21,7 +23,9 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 	public void readFromNBT(NBTTagCompound nbt)
     {
        super.readFromNBT(nbt);
-       inventory = InventoryUtils.loadInventory(nbt);
+       inventory = InventoryUtils.loadInventory(nbt.getCompoundTag("inventory"));
+       if(inventory == null || inventory.length < 4)
+			inventory = new ItemStack[4];
        fuel = nbt.getIntArray("fuel");
        maxfuel = nbt.getIntArray("maxfuel");
     }
@@ -30,7 +34,7 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 	public void getDescriptionNBT(NBTTagCompound nbt)
     {
 		super.getDescriptionNBT(nbt);
-		InventoryUtils.saveInventory(inventory, nbt);
+		nbt.setTag("inventory", InventoryUtils.saveInventory(inventory));
 		nbt.setBoolean("active", isActive);
 		nbt.setIntArray("fuel", fuel);
 		nbt.setIntArray("maxfuel", maxfuel);
@@ -40,7 +44,9 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 	public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity pkt)
     {
 		super.onDataPacket(net, pkt);
-		inventory = InventoryUtils.loadInventory(pkt.func_148857_g());
+		inventory = InventoryUtils.loadInventory(pkt.func_148857_g().getCompoundTag("inventory"));
+		if(inventory == null || inventory.length < 4)
+			inventory = new ItemStack[4];
 		isActive = pkt.func_148857_g().getBoolean("active");
 		fuel = pkt.func_148857_g().getIntArray("fuel");
 		maxfuel = pkt.func_148857_g().getIntArray("maxfuel");
@@ -50,7 +56,7 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 	public void writeToNBT(NBTTagCompound nbt)
     {
         super.writeToNBT(nbt);
-        InventoryUtils.saveInventory(inventory, nbt);
+        nbt.setTag("inventory", InventoryUtils.saveInventory(inventory));
         nbt.setIntArray("fuel", fuel);
         nbt.setIntArray("maxfuel", maxfuel);
     }
@@ -102,6 +108,9 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 	        }
 	}
 	
+	public int playTimeLeft = 0;
+	public static final int playTime = 120;
+	
 	@Override
 	public void updateEntity() 
 	{
@@ -109,43 +118,57 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 		if(!worldObj.isRemote)
 		{
 			boolean tempActive = isActive;
-			if(getInteralStorage()-getCurrentPower() > 0)
+			if(RedstoneControlHelper.handleRedstoneInput(this, this))
 			{
-				for (int i = 0; i < inventory.length; i++) {
-					if(fuel[i] <= 0)
-					{
-						if(inventory[i] != null)
+				if(getInteralStorage()-getCurrentPower() > 0)
+				{
+					for (int i = 0; i < inventory.length; i++) {
+						if(fuel[i] <= 0)
 						{
-							int burn = TileEntityFurnace.getItemBurnTime(inventory[i]);
-							if(burn > 0)
+							if(inventory[i] != null)
 							{
-								inventory[i].stackSize--;
-								if(inventory[i].stackSize == 0)
-									inventory[i] = null;
-								fuel[i] = (int) (burn/HeatGenerator.fuelGeneration);
-								maxfuel[i] = fuel[i];
-								if(!isActive)
+								int burn = TileEntityFurnace.getItemBurnTime(inventory[i]);
+								if(burn > 0)
 								{
-									isActive = true;
-									updateBlock();
+									inventory[i].stackSize--;
+									if(inventory[i].stackSize == 0)
+										inventory[i] = null;
+									fuel[i] = (int) (burn/HeatGenerator.fuelGeneration);
+									maxfuel[i] = fuel[i];
+									if(!isActive)
+									{
+										isActive = true;
+										updateBlock();
+									}
 								}
 							}
+						}else{
+							float power = producePerTick;
+							if(fuel[i] < power)
+								power = fuel[i];
+							
+							power = receivePower(power);
+							fuel[i] -= power;
+							isActive = true;
 						}
-					}else{
-						int power = producePerTick;
-						if(fuel[i] < power)
-							power = fuel[i];
-						
-						power = recievePower(power);
-						fuel[i] -= power;
-						isActive = true;
 					}
-				}
-			}else
+				}else
+					isActive = false;
+			}else{
 				isActive = false;
+			}
 			if(isActive != tempActive)
 			{
 				updateBlock();
+			}
+			if(isActive)
+			{
+				if(playTimeLeft == 0)
+				{
+					playTimeLeft = playTime;
+					worldObj.playSoundEffect(xCoord, yCoord, zCoord, RandomAdditions.modid + ":furnace", 1, 1);
+				}
+				playTimeLeft--;
 			}
 		}
 	}
@@ -235,7 +258,7 @@ public class TileEntityHeatGenerator extends EnergyComponent implements ISidedIn
 
 	@Override
 	public int getMaxOutput() {
-		return getCurrentPower();
+		return (int) getCurrentPower();
 	}
 
 	@Override

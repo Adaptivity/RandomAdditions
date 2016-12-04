@@ -25,19 +25,33 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
+import com.creativemd.creativecore.client.block.BlockRenderHelper;
+import com.creativemd.creativecore.client.block.IBlockAccessFake;
+import com.creativemd.creativecore.client.rendering.RenderHelper2D;
 import com.creativemd.creativecore.client.rendering.RenderHelper3D;
 import com.creativemd.creativecore.common.container.SubContainer;
 import com.creativemd.creativecore.common.gui.IGuiCreator;
 import com.creativemd.creativecore.common.gui.SubGui;
 import com.creativemd.creativecore.common.utils.CubeObject;
 import com.creativemd.creativecore.core.CreativeCore;
+import com.creativemd.littletiles.common.blocks.ILittleTile;
+import com.creativemd.littletiles.common.structure.LittleStructure;
+import com.creativemd.littletiles.common.tileentity.TileEntityLittleTiles;
+import com.creativemd.littletiles.common.utils.LittleTile;
+import com.creativemd.littletiles.common.utils.LittleTilePreview;
+import com.creativemd.randomadditions.common.gui.controls.GuiGearInformation;
+import com.creativemd.randomadditions.common.redstone.RedstoneControlHelper;
+import com.creativemd.randomadditions.common.systems.assembly.SubSystemAssembly;
+import com.creativemd.randomadditions.common.systems.machine.blocks.Sawing;
 import com.creativemd.randomadditions.core.RandomAdditions;
 import com.creativemd.randomadditions.core.RandomAdditionsClient;
 
+import cpw.mods.fml.common.Optional.Interface;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class BlockSub extends BlockContainer implements IGuiCreator{
+@Interface(modid = "littletiles", iface = "com.creativemd.littletiles.common.blocks.ILittleTile")
+public class BlockSub extends BlockContainer implements IGuiCreator, ILittleTile{
 	
 	public SubBlockSystem system;
 	
@@ -187,76 +201,10 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 		system.getSubBlock(world.getBlockMetadata(x, y, z)).onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
     }
 	
-	
 	public boolean renderInventoryBlock(Block machine, int metadata, int modelId, RenderBlocks renderer) {
-		Tessellator tesselator = Tessellator.instance;
+		
 		ArrayList<CubeObject> cubes = system.getSubBlock(metadata).getCubes(new ItemStack(machine, 1, metadata),null, 0, 0, 0);
-		for (int i = 0; i < cubes.size(); i++)
-        {
-			renderer.setRenderBounds(cubes.get(i).minX, cubes.get(i).minY, cubes.get(i).minZ, cubes.get(i).maxX, cubes.get(i).maxY, cubes.get(i).maxZ);
-            Block block = machine;
-            int meta = metadata;
-            if(cubes.get(i).block != null)
-            {
-            	block = cubes.get(i).block;
-            	meta = 0;
-            }
-            if(cubes.get(i).icon != null){
-            	GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(0.0F, -1.0F, 0.0F);
-                renderer.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(0.0F, 1.0F, 0.0F);
-                renderer.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(0.0F, 0.0F, -1.0F);
-                renderer.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(0.0F, 0.0F, 1.0F);
-                renderer.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(-1.0F, 0.0F, 0.0F);
-                renderer.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                tesselator.startDrawingQuads();
-                tesselator.setNormal(1.0F, 0.0F, 0.0F);
-                renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, cubes.get(i).icon);
-                tesselator.draw();
-                GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-            }else{
-	            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(0.0F, -1.0F, 0.0F);
-	            renderer.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, meta));
-	            tesselator.draw();
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(0.0F, 1.0F, 0.0F);
-	            renderer.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, meta));
-	            tesselator.draw();
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(0.0F, 0.0F, -1.0F);
-	            renderer.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, meta));
-	            tesselator.draw();
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(0.0F, 0.0F, 1.0F);
-	            renderer.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, meta));
-	            tesselator.draw();
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(-1.0F, 0.0F, 0.0F);
-	            renderer.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, meta));
-	            tesselator.draw();
-	            tesselator.startDrawingQuads();
-	            tesselator.setNormal(1.0F, 0.0F, 0.0F);
-	            renderer.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, meta));
-	            tesselator.draw();
-	            GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-            }
-        }
+		BlockRenderHelper.renderInventoryCubes(renderer, cubes, machine, metadata);
 		return true;
 	}
 	
@@ -269,7 +217,8 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		SubBlock subblock = system.getSubBlock(world.getBlockMetadata(x, y, z));
 		ArrayList<CubeObject> cubes = subblock.getCubes(null, world, x, y, z);
-		for (int i = 0; i < cubes.size(); i++) {
+		BlockRenderHelper.renderCubes(world, cubes, x, y, z, block, renderer, subblock.getRotation() != 0 ? subblock.getDirection(world, x, y, z) : ForgeDirection.EAST);
+		/*for (int i = 0; i < cubes.size(); i++) {
 			renderer.setRenderBounds(cubes.get(i).minX, cubes.get(i).minY, cubes.get(i).minZ, cubes.get(i).maxX, cubes.get(i).maxY, cubes.get(i).maxZ);
 			if(subblock.getRotation() != 0)
 				RenderHelper3D.applyBlockRotation(renderer, subblock.getDirection(world, x, y, z));
@@ -279,11 +228,14 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 			if(cubes.get(i).block != null)
 				if(cubes.get(i).meta != -1)
 				{
-					RenderHelper3D.renderBlocks.blockAccess = renderer.blockAccess;
+					
 					RenderHelper3D.renderBlocks.clearOverrideBlockTexture();
 					RenderHelper3D.renderBlocks.setRenderBounds(cubes.get(i).minX, cubes.get(i).minY, cubes.get(i).minZ, cubes.get(i).maxX, cubes.get(i).maxY, cubes.get(i).maxZ);
 					RenderHelper3D.renderBlocks.meta = cubes.get(i).meta;
-					RenderHelper3D.renderBlocks.renderStandardBlock(cubes.get(i).block, x, y, z);
+					IBlockAccessFake fake = new IBlockAccessFake(renderer.blockAccess);
+					RenderHelper3D.renderBlocks.blockAccess = fake;
+					fake.overrideMeta = cubes.get(i).meta;
+					RenderHelper3D.renderBlocks.renderBlockAllFaces(cubes.get(i).block, x, y, z);
 					return true;
 				}
 				else
@@ -293,7 +245,7 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 			
 			if(cubes.get(i).icon != null || cubes.get(i).block != null)
 				renderer.clearOverrideBlockTexture();
-		}
+		}*/
 		return true;
 	}
 	
@@ -320,12 +272,12 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
     }
 	
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float p_149727_7_, float p_149727_8_, float p_149727_9_)
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ)
     {
 		SubBlock subBlock = system.getSubBlock(world.getBlockMetadata(x, y, z));
 		if(subBlock.onBlockActivated(player, player.getHeldItem(), world.getTileEntity(x, y, z)))
 			return true;
-		SubContainer gui = subBlock.getContainer(world.getTileEntity(x, y, z));
+		SubContainer gui = subBlock.getContainer(world.getTileEntity(x, y, z), player);
 		if(gui != null)
 		{
 			if(!world.isRemote)
@@ -386,7 +338,19 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 	@SideOnly(Side.CLIENT)
     public void registerBlockIcons(IIconRegister register)
     {
-        this.blockIcon = register.registerIcon(this.getTextureName());
+		RedstoneControlHelper.ignore = register.registerIcon(RandomAdditions.modid + ":custom/signals/ignoresignal");
+		RedstoneControlHelper.impulse = register.registerIcon(RandomAdditions.modid + ":custom/signals/impulsesignal");
+		RedstoneControlHelper.nosignal = register.registerIcon(RandomAdditions.modid + ":custom/signals/nosignal");
+		RedstoneControlHelper.signal = register.registerIcon(RandomAdditions.modid + ":custom/signals/signal");
+		RedstoneControlHelper.icons = new IIcon[]{RedstoneControlHelper.ignore, RedstoneControlHelper.signal, RedstoneControlHelper.nosignal, RedstoneControlHelper.impulse};
+		Sawing.sawblade = register.registerIcon(RandomAdditions.modid + ":custom/sawblade");
+		
+		RandomAdditions.gears = new IIcon[5];
+		for (int i = 0; i < 5; i++) {
+				RandomAdditions.gears[i] = register.registerIcon(RandomAdditions.modid + ":custom/amachine" + (i+1));
+		}
+		
+		this.blockIcon = register.registerIcon(this.getTextureName());
 		for (int j = 0; j < system.blocks.size(); j++) {
 			((SubBlock) system.blocks.get(j)).registerIcon(register);
 		}
@@ -428,13 +392,32 @@ public class BlockSub extends BlockContainer implements IGuiCreator{
 	@SideOnly(Side.CLIENT)
 	public SubGui getGui(EntityPlayer player, ItemStack stack, World world,
 			int x, int y, int z) {
-		return system.getSubBlock(world.getBlockMetadata(x, y, z)).getGui(world.getTileEntity(x, y, z));
+		return system.getSubBlock(world.getBlockMetadata(x, y, z)).getGui(world.getTileEntity(x, y, z), player);
 	}
 
 	@Override
 	public SubContainer getContainer(EntityPlayer player, ItemStack stack,
 			World world, int x, int y, int z) {
-		return system.getSubBlock(world.getBlockMetadata(x, y, z)).getContainer(world.getTileEntity(x, y, z));
+		return system.getSubBlock(world.getBlockMetadata(x, y, z)).getContainer(world.getTileEntity(x, y, z), player);
 	}
+
+	@Override
+	public ArrayList<LittleTilePreview> getLittlePreview(ItemStack stack) {
+		SubBlock block = system.getSubBlock(stack.getItemDamage());
+		if(block instanceof ILittleTile)
+			return ((ILittleTile) block).getLittlePreview(stack);
+		return null;
+	}
+
+	@Override
+	public void rotateLittlePreview(ItemStack stack, ForgeDirection direction) {
+		LittleTilePreview.rotatePreview(stack.stackTagCompound, direction);
+	}
+
+	@Override
+	public LittleStructure getLittleStructure(ItemStack stack) {
+		return null;
+	}
+	
 	
 }

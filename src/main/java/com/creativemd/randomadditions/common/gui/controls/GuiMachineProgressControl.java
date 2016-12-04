@@ -23,8 +23,8 @@ public class GuiMachineProgressControl extends GuiControl{
 	
 	public static final int amount = 6;
 	
-	public GuiMachineProgressControl(SubBlockMachine block, TileEntityMachine machine, int x, int y, int width, int height) {
-		super(x, y, width, height);
+	public GuiMachineProgressControl(String name, SubBlockMachine block, TileEntityMachine machine, int x, int y, int width, int height) {
+		super(name, x, y, width, height);
 		this.block = block;
 		this.machine = machine;
 	}
@@ -85,8 +85,11 @@ public class GuiMachineProgressControl extends GuiControl{
 		{
 			ArrayList<String> strings = new ArrayList<String>();
 			MachineRecipe recipe = block.getRecipe(machine.getInput());
-        	double progress = (double)machine.progress/(double)recipe.neededPower;
-        	strings.add((int)(progress*100D) + "%");
+			if(recipe != null)
+			{
+	        	double progress = (double)machine.progress/(double)recipe.neededPower;
+	        	strings.add((int)(progress*100D) + "%");
+			}
         	return strings;
 		}
 		return new ArrayList<String>();

@@ -4,16 +4,19 @@ import java.util.ArrayList;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
-import com.creativemd.creativecore.common.gui.SubGui;
-import com.creativemd.creativecore.common.gui.controls.GuiButtonControl;
+import com.creativemd.creativecore.common.gui.SubGuiTileEntity;
+import com.creativemd.creativecore.common.gui.controls.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.GuiControl;
+import com.creativemd.creativecore.common.gui.event.ControlClickEvent;
 import com.creativemd.randomadditions.common.gui.controls.GuiBookControl;
+import com.creativemd.randomadditions.common.item.ItemRandomArmor;
 import com.creativemd.randomadditions.common.item.ItemTool;
 import com.creativemd.randomadditions.common.item.enchantment.EnchantmentModifier;
-import com.creativemd.randomadditions.common.subsystem.SubGuiTileEntity;
 import com.creativemd.randomadditions.common.systems.enchant.SubSystemEnchant;
 import com.creativemd.randomadditions.common.systems.enchant.tileentity.TileEntityUpgrade;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 public class SubGuiUpgrade extends SubGuiTileEntity{
 	
@@ -26,26 +29,11 @@ public class SubGuiUpgrade extends SubGuiTileEntity{
 		super(upgrade);
 		this.upgrade = upgrade;
 	}
-	
-	@Override
-	public ArrayList<GuiControl> getControls() {
-		ArrayList<GuiControl> controls = new ArrayList<GuiControl>();
-		book = new GuiBookControl(new String[0], 115, 40, 105, 70);
-		controls.add(book);
-		controls.add(new GuiButtonControl("Upgrade", 34, 60, 50, 20));
-		return controls;
-	}
-	
-	@Override
-	public void onControlClicked(GuiControl control)
-	{
-		sendGuiPacket(0, "Clicked");
-	}
 
 	@Override
-	public void drawForeground(FontRenderer fontRenderer) {
+	public void drawOverlay(FontRenderer fontRenderer) {
 		ItemStack stack = upgrade.inventory[0];
-		if(stack != null && stack.getItem() instanceof ItemTool && SubSystemEnchant.getLevel(stack) < 3)
+		if(stack != null && (stack.getItem() instanceof ItemTool || stack.getItem() instanceof ItemRandomArmor)  && SubSystemEnchant.getLevel(stack) < 3)
 		{
 			EnchantmentModifier modifier = SubSystemEnchant.getModifier(stack);
 			String name = "Level";
@@ -63,9 +51,19 @@ public class SubGuiUpgrade extends SubGuiTileEntity{
 			book.text = new String[0];
 	}
 	
+	@CustomEventSubscribe
+	public void onClicked(ControlClickEvent event)
+	{
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("type", 0);
+		sendPacketToServer(0, nbt);
+	}
+	
 	@Override
-	public void drawBackground(FontRenderer fontRenderer) {
-		
+	public void createControls() {
+		book = new GuiBookControl("book", new String[0], 65, 5, 105, 70);
+		controls.add(book);
+		controls.add(new GuiButton("Upgrade", 10, 50, 50, 20));
 	}
 
 }

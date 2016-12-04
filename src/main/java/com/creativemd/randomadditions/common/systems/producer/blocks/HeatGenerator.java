@@ -15,12 +15,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 
 import com.creativemd.creativecore.client.rendering.RenderHelper3D;
-import com.creativemd.creativecore.common.container.SubContainer;
-import com.creativemd.creativecore.common.gui.SubGui;
+import com.creativemd.creativecore.common.gui.SubContainerTileEntity;
+import com.creativemd.creativecore.common.gui.SubGuiTileEntity;
 import com.creativemd.creativecore.common.utils.CubeObject;
 import com.creativemd.randomadditions.common.subsystem.SubBlockSystem;
-import com.creativemd.randomadditions.common.subsystem.SubContainerTileEntity;
-import com.creativemd.randomadditions.common.subsystem.SubGuiTileEntity;
 import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
 import com.creativemd.randomadditions.common.systems.producer.SubBlockProducer;
 import com.creativemd.randomadditions.common.systems.producer.gui.SubContainerHeatGen;
@@ -61,7 +59,7 @@ public class HeatGenerator extends SubBlockProducer{
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public SubGuiTileEntity getGui(TileEntity tileEntity) {
+	public SubGuiTileEntity getGui(TileEntity tileEntity, EntityPlayer player) {
 		if(tileEntity instanceof TileEntityHeatGenerator)
 			return new SubGuiHeatGen((TileEntityHeatGenerator) tileEntity, this);
 		return null;
@@ -74,9 +72,9 @@ public class HeatGenerator extends SubBlockProducer{
 	}
 
 	@Override
-	public SubContainerTileEntity getContainer(TileEntity tileEntity) {
+	public SubContainerTileEntity getContainer(TileEntity tileEntity, EntityPlayer player) {
 		if(tileEntity instanceof TileEntityHeatGenerator)
-			return new SubContainerHeatGen((TileEntityRandom) tileEntity);
+			return new SubContainerHeatGen((TileEntityRandom) tileEntity, player);
 		return null;
 	}
 	
@@ -173,6 +171,11 @@ public class HeatGenerator extends SubBlockProducer{
 	@Override
 	public int getModifiers() {
 		return 2;
+	}
+
+	@Override
+	public int getPlayTime() {
+		return 120;
 	}
 
 }

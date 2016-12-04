@@ -2,31 +2,28 @@ package com.creativemd.randomadditions.common.systems.rf.container;
 
 import java.util.ArrayList;
 
-import com.creativemd.randomadditions.common.subsystem.SubContainerTileEntity;
-import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.nbt.NBTTagCompound;
+
+import com.creativemd.creativecore.common.gui.SubContainerTileEntity;
+import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
 
 public class SubContainerRF extends SubContainerTileEntity{
 
-	public SubContainerRF(TileEntityRandom tileEntity) {
-		super(tileEntity);
+	public SubContainerRF(TileEntityRandom tileEntity, EntityPlayer player) {
+		super(tileEntity, player);
+	}
+	
+	@Override
+	public void createControls() {
+		
 	}
 
 	@Override
-	public void onGuiPacket(int control, String value, EntityPlayer player) {
-	}
-
-	@Override
-	public ArrayList<Slot> getSlots(EntityPlayer player) {
-		return new ArrayList<Slot>();
-	}
-
-	@Override
-	public boolean doesGuiNeedUpdate() {
-		return true;
+	public void onGuiPacket(int controlID, NBTTagCompound nbt,
+			EntityPlayer player) {
+		
 	}
 
 }

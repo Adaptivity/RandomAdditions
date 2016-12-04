@@ -48,12 +48,12 @@ public class CraftMaterial {
 		RandomAdditions.materials.add(this);
 	}
 	
-	public CraftMaterial setArmorModifier(EnchantmentModifier modifier)
+	public CraftMaterial setAllInternalModifier(EnchantmentModifier modifier)
 	{
-		/*enchantments.put(ItemTool.h, modifier);
-		enchantments.put(ItemTool.pickaxe, modifier);
-		enchantments.put(ItemTool.shovel, modifier);*/
-		//TODO Add armor
+		for (int i = 0; i < ItemTool.tools.size(); i++) {
+			if(!ItemTool.tools.get(i).external)
+				enchantments.put(ItemTool.tools.get(i), modifier);
+		}
 		return this;
 	}
 	
@@ -82,6 +82,33 @@ public class CraftMaterial {
 	public CraftMaterial setBowModifier(EnchantmentModifier modifier)
 	{
 		enchantments.put(ItemTool.bow, modifier);
+		return this;
+	}
+	
+	public CraftMaterial setArmorModifier(EnchantmentModifier modifier)
+	{
+		enchantments.put(ItemTool.helmet, modifier);
+		enchantments.put(ItemTool.chestplate, modifier);
+		enchantments.put(ItemTool.leggings, modifier);
+		enchantments.put(ItemTool.boots, modifier);
+		return this;
+	}
+	
+	public CraftMaterial setChestplateModifier(EnchantmentModifier modifier)
+	{
+		enchantments.put(ItemTool.chestplate, modifier);
+		return this;
+	}
+	
+	public CraftMaterial setBootsModifier(EnchantmentModifier modifier)
+	{
+		enchantments.put(ItemTool.boots, modifier);
+		return this;
+	}
+	
+	public CraftMaterial setHelmetModifier(EnchantmentModifier modifier)
+	{
+		enchantments.put(ItemTool.helmet, modifier);
 		return this;
 	}
 	

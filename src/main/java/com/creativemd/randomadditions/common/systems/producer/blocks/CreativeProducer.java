@@ -27,7 +27,7 @@ public class CreativeProducer extends SubBlockProducer{
 	@Override
 	public void updateTileEntity(TileEntityProducer producer) {
 		if(!producer.getWorldObj().isRemote)
-			producer.recievePower(producer.getInteralStorage() - producer.getCurrentPower());
+			producer.receivePower(producer.getInteralStorage() - producer.getCurrentPower());
 	}
 	
 	@Override
@@ -52,6 +52,11 @@ public class CreativeProducer extends SubBlockProducer{
 
 	@Override
 	public int getModifiers() {
+		return 0;
+	}
+
+	@Override
+	public int getPlayTime() {
 		return 0;
 	}
 	

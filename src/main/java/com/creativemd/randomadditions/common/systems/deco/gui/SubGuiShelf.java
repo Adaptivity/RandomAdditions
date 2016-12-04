@@ -4,9 +4,8 @@ import java.util.ArrayList;
 
 import net.minecraft.client.gui.FontRenderer;
 
-import com.creativemd.creativecore.common.gui.SubGui;
+import com.creativemd.creativecore.common.gui.SubGuiTileEntity;
 import com.creativemd.creativecore.common.gui.controls.GuiControl;
-import com.creativemd.randomadditions.common.subsystem.SubGuiTileEntity;
 import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
 
 import cpw.mods.fml.relauncher.Side;
@@ -20,19 +19,12 @@ public class SubGuiShelf extends SubGuiTileEntity{
 	}
 
 	@Override
-	public ArrayList<GuiControl> getControls() {
-		ArrayList<GuiControl> controls = new ArrayList<GuiControl>();
-		
-		return controls;
-	}
-
-	@Override
-	public void drawForeground(FontRenderer fontRenderer) {
+	public void drawOverlay(FontRenderer fontRenderer) {
 		
 	}
 
 	@Override
-	public void drawBackground(FontRenderer fontRenderer) {
+	public void createControls() {
 		
 	}
 

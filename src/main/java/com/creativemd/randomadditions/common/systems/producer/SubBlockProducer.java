@@ -10,13 +10,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import com.creativemd.creativecore.common.container.SubContainer;
-import com.creativemd.creativecore.common.gui.SubGui;
+import com.creativemd.creativecore.common.gui.SubContainerTileEntity;
+import com.creativemd.creativecore.common.gui.SubGuiTileEntity;
 import com.creativemd.creativecore.common.utils.CubeObject;
 import com.creativemd.randomadditions.common.subsystem.SubBlock;
 import com.creativemd.randomadditions.common.subsystem.SubBlockSystem;
-import com.creativemd.randomadditions.common.subsystem.SubContainerTileEntity;
-import com.creativemd.randomadditions.common.subsystem.SubGuiTileEntity;
 import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
 import com.creativemd.randomadditions.common.systems.producer.gui.SubContainerProducer;
 import com.creativemd.randomadditions.common.systems.producer.gui.SubGuiProducer;
@@ -33,16 +31,22 @@ public abstract class SubBlockProducer extends SubBlock {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public SubGuiTileEntity getGui(TileEntity tileEntity) {
+	public SubGuiTileEntity getGui(TileEntity tileEntity, EntityPlayer player) {
 		if(tileEntity instanceof TileEntityProducer)
 			return new SubGuiProducer((TileEntityProducer) tileEntity, this);
 		return null;
 	}
+	
+	@Override
+	public boolean hasBlockTexture()
+	{
+		return false;
+	}
 
 	@Override
-	public SubContainerTileEntity getContainer(TileEntity tileEntity) {
+	public SubContainerTileEntity getContainer(TileEntity tileEntity, EntityPlayer player) {
 		if(tileEntity instanceof TileEntityProducer)
-			return new SubContainerProducer((TileEntityRandom) tileEntity);
+			return new SubContainerProducer((TileEntityRandom) tileEntity, player);
 		return null;
 	}
 	
@@ -116,5 +120,13 @@ public abstract class SubBlockProducer extends SubBlock {
 	public double getRotation(TileEntityProducer producer, double Time)
 	{
 		return 0;
+	}
+	
+	public abstract int getPlayTime();
+	
+	public float getPlayVolume(TileEntityProducer producer)
+	{
+		float test = Math.max((float)producer.speed/130F, 0.05F);
+		return Math.min(Math.max((float)producer.speed/130F, 0.05F), 1);
 	}
 }

@@ -4,37 +4,35 @@ import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.nbt.NBTTagCompound;
 
 import org.lwjgl.opengl.GL11;
 
 import com.creativemd.creativecore.client.rendering.RenderHelper2D;
 import com.creativemd.creativecore.common.gui.GuiContainerSub;
-import com.creativemd.creativecore.common.gui.SubGui;
-import com.creativemd.creativecore.common.gui.controls.GuiButtonControl;
+import com.creativemd.creativecore.common.gui.SubGuiTileEntity;
+import com.creativemd.creativecore.common.gui.controls.GuiButton;
 import com.creativemd.creativecore.common.gui.controls.GuiControl;
-import com.creativemd.randomadditions.common.subsystem.SubGuiTileEntity;
+import com.creativemd.creativecore.common.gui.event.ControlClickEvent;
 import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
+import com.n247s.api.eventapi.eventsystem.CustomEventSubscribe;
 
 public class SubGuiRepair extends SubGuiTileEntity{
 	
 	public SubGuiRepair(TileEntityRandom tileEntity) {
 		super(tileEntity);
 	}
-
-	@Override
-	public ArrayList<GuiControl> getControls() {
-		ArrayList<GuiControl> controls = new ArrayList<GuiControl>();
-		controls.add(new GuiButtonControl("Repair", 110, 60, 60, 20));
-		return controls;
-	}
 	
-	public void onControlClicked(GuiControl control)
+	@CustomEventSubscribe
+	public void onClicked(ControlClickEvent event)
 	{
-		sendGuiPacket(0, "Clicked");
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setInteger("type", 0);
+		sendPacketToServer(0, nbt);
 	}
 	
 	@Override
-	public void drawForeground(FontRenderer fontRenderer) {
+	public void drawOverlay(FontRenderer fontRenderer) {
 		Minecraft.getMinecraft().getTextureManager().bindTexture(GuiContainerSub.background);
 		//GL11.glTranslated(mc.displayWidth/8, mc.displayHeight/8, 0);
 		GL11.glPushMatrix();
@@ -45,8 +43,8 @@ public class SubGuiRepair extends SubGuiTileEntity{
 	}
 
 	@Override
-	public void drawBackground(FontRenderer fontRenderer) {
-		
+	public void createControls() {
+		controls.add(new GuiButton("Repair", 80, 50, 60, 20));
 	}
 
 }

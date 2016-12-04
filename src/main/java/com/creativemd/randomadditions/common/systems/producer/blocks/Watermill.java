@@ -35,6 +35,7 @@ public class Watermill extends SubBlockProducer{
 	}
 	
 	public static float Generation;
+	public static float speed;
 
 	@Override
 	public int getMaxSpeed(TileEntityProducer tileEntity, ItemStack stack) {
@@ -70,7 +71,7 @@ public class Watermill extends SubBlockProducer{
 		case WEST:
 			return new CubeObject(0, -radius, -radius, length, radius, radius);
 		case SOUTH:
-			return new CubeObject(-radius, -radius, length, radius, radius, 0);
+			return new CubeObject(-radius, -radius, -length, radius, radius, 0);
 		case NORTH:
 			return new CubeObject(-radius, -radius, 0, radius, radius, length);	
 		default:
@@ -183,7 +184,7 @@ public class Watermill extends SubBlockProducer{
 		int[] modi = producer.getModifiers();
 		int size = modi[0];
 		int length = modi[1];
-		return producer.rotationOffset + nanoTime/500000000D*producer.speed/(size+length);
+		return (producer.rotationOffset + nanoTime/500000000D*producer.speed/(size+length)) * speed;
 	}
 	
 	
@@ -356,6 +357,17 @@ public class Watermill extends SubBlockProducer{
 		if(power < 0)
 			power = 0;
 		return power;
+	}
+	
+	@Override
+	public float getPlayVolume(TileEntityProducer producer)
+	{
+		return Math.min(Math.max((float)producer.speed/130F, 0.05F), 1);
+	}
+
+	@Override
+	public int getPlayTime() {
+		return 220;
 	}
 	
 }

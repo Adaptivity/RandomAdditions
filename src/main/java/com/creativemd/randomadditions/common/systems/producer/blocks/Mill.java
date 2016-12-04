@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockColored;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -21,7 +22,9 @@ import org.lwjgl.opengl.GL11;
 
 import com.creativemd.creativecore.client.rendering.RenderHelper3D;
 import com.creativemd.creativecore.common.utils.CubeObject;
+import com.creativemd.creativecore.common.utils.RotationUtils;
 import com.creativemd.randomadditions.common.subsystem.SubBlockSystem;
+import com.creativemd.randomadditions.common.subsystem.TileEntityRandom;
 import com.creativemd.randomadditions.common.systems.producer.SubBlockProducer;
 import com.creativemd.randomadditions.common.systems.producer.tileentity.TileEntityProducer;
 
@@ -36,6 +39,7 @@ public class Mill extends SubBlockProducer{
 	}
 	
 	public static float Generation;
+	public static float speed;
 
 	public CubeObject getArea(TileEntityProducer producer, int expand)
 	{
@@ -53,6 +57,10 @@ public class Mill extends SubBlockProducer{
 				return new CubeObject(-length, -length, 0, length, length, expand);
 			case NORTH:
 				return new CubeObject(-length, -length, -expand, length, length, 0);
+			case UP:
+				return new CubeObject(-length, 0, -length, length, expand, length);
+			case DOWN:
+				return new CubeObject(-length, -expand, -length, length, 0, length);
 			default:
 				return new CubeObject(0, 0, 0, 1, 1, 1);
 			}
@@ -103,9 +111,13 @@ public class Mill extends SubBlockProducer{
 				height = sizeY-i;
 			if(height > 0)
 			{
+				
 				GL11.glPushMatrix();
+				
 				GL11.glTranslated(posX, posY, posZ);
+				
 				int rotationY = 0;
+				int rotationX = 0;
 				switch(direction)
 				{
 				case EAST:
@@ -120,12 +132,17 @@ public class Mill extends SubBlockProducer{
 				case WEST:
 					rotationY += 90;
 					break;	
+				case UP:
+				case DOWN:
+					rotationX = 90;
 				default:
 					break;
 				}
 				GL11.glRotated(rotationY, 0, 1, 0);
+				
 				double offsetY = 0.5+i; //could be: 1+i+height
 				GL11.glTranslated(0, -offsetY, 0);
+				GL11.glRotated(rotationX, 1, 0, 0);
 				GL11.glRotated(rotation, 0, 0, 1);
 				
 				
@@ -168,6 +185,8 @@ public class Mill extends SubBlockProducer{
 			double sizeY = modi[1];
 			double sizeZ = 1;
 			rotation += (double)1/(double)arms*360D;
+			//if(producer.getDirection() == ForgeDirection.DOWN || producer.getDirection() == ForgeDirection.UP)
+				//GL11.glRotated(90, 1, 0, 0);
 			renderArm(x, y, z, sizeX, sizeY, sizeZ, rotation, producer.getDirection(), modi[2]);
 		}
 		GL11.glPushMatrix();
@@ -187,6 +206,9 @@ public class Mill extends SubBlockProducer{
 		case WEST:
 			rotationY += 90;
 			break;	
+		case UP:
+		case DOWN:
+			GL11.glRotated(90, 1, 0, 0);
 		default:
 			break;
 		}
@@ -230,7 +252,7 @@ public class Mill extends SubBlockProducer{
 		int[] modi = producer.getModifiers();
 		int size = modi[0];
 		int length = modi[1];
-		return producer.rotationOffset + nanoTime/500000000D*producer.speed/((size+length)/2);
+		return (producer.rotationOffset + nanoTime/500000000D*producer.speed/((size+length)/2))*speed;
 	}
 	
 	@Override
@@ -292,6 +314,9 @@ public class Mill extends SubBlockProducer{
 			int[] modi = producer.getModifiers();
 			int possiblePower = modi[0]*modi[1]*4;;
 			int power = possiblePower - getAirLevel(producer.getWorldObj(), (int)cube.minX+producer.xCoord, (int)cube.minY+producer.yCoord, (int)cube.minZ+producer.zCoord, (int)cube.maxX+producer.xCoord, (int)cube.maxY+producer.yCoord, (int)cube.maxZ+producer.zCoord, producer.yCoord);
+			ForgeDirection direction = producer.getDirection();
+			if(direction == ForgeDirection.UP || direction == ForgeDirection.DOWN)
+				power /= 2;
 			if(power < 0)
 				power = 0;
 			return (int) (power/Generation);
@@ -369,9 +394,30 @@ public class Mill extends SubBlockProducer{
 	}
 	
 	@Override
-	public boolean allowShiftRotation()
+	public void onBlockPlacedEvent(World world, Entity entity, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int meta)
+    {
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if(tile instanceof TileEntityRandom)
+		{
+			((TileEntityRandom) tile).direction = (byte) RotationUtils.getIndex(ForgeDirection.getOrientation(side));
+		}
+    }
+	
+	@Override
+	public boolean useSideForRotation()
 	{
-		return false;
+		return true;
+	}
+	
+	@Override
+	public int getRotation()
+	{
+		return 2;
+	}
+
+	@Override
+	public int getPlayTime() {
+		return 0;
 	}
 	
 	

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.creativemd.creativecore.common.utils.stack.StackInfoItem;
 import com.creativemd.randomadditions.common.item.ItemCore;
 import com.creativemd.randomadditions.core.RandomAdditions;
 
@@ -28,6 +29,7 @@ public class MachineRecipeCool extends MachineRecipe{
 		return result;
 	}
 	
+	@Override
 	public ItemStack getOutput(ArrayList<ItemStack> input)
 	{
 		if(input.size() > 0 && input.get(0) != null)
@@ -46,8 +48,8 @@ public class MachineRecipeCool extends MachineRecipe{
 		if(isRecipeDoable(null))
 		{
 			ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(); 
-			if(input.get(0) instanceof Item)
-				((Item)input.get(0)).getSubItems((Item) input.get(0), RandomAdditions.tab, stacks);
+			if(input.get(0) instanceof StackInfoItem)
+				((StackInfoItem)input.get(0)).item.getSubItems(((StackInfoItem)input.get(0)).item, RandomAdditions.tab, stacks);
 			
 			for (int i = 0; i < stacks.size(); i++) {
 				ArrayList<ItemStack> input = new ArrayList<ItemStack>();
